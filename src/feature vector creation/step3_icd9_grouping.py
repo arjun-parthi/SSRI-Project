@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-file1 = 'data_ml/ICD9_final1.xlsx'
+file1 = '../data/ICD9_final1.xlsx'
 x1 = pd.ExcelFile(file1)
 icd9 = x1.parse('Sheet1')
 print(icd9.shape)
@@ -162,6 +162,6 @@ print(icd9.shape)
 print(icd9.iloc[0:1])
 print(icd9.dtypes)
 
-writer = pd.ExcelWriter('data_ml/ICD9_features.xlsx')
+writer = pd.ExcelWriter('../data/ICD9_features.xlsx')
 icd9.to_excel(writer,'Sheet1')
 writer.save()

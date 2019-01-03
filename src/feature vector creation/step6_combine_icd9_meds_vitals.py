@@ -1,28 +1,28 @@
 import pandas as pd
 import numpy as np
 
-file1 = 'data_ml/PATIENT_FINAL.xlsx'
+file1 = '../data/PATIENT_FINAL.xlsx'
 x1 = pd.ExcelFile(file1)
 patient_demog = x1.parse('Sheet1')
-print(patient_demog.shape) #(5127, 11)
+print(patient_demog.shape)
 
 
-file2 = 'data_ml/ICD9_final_features.xlsx'
+file2 = '../data/ICD9_final_features.xlsx'
 x2 = pd.ExcelFile(file2)
 icd9 = x2.parse('Sheet1')
-print(icd9.shape) #(1560, 19)
+print(icd9.shape)
 
 
-file3 = 'data_ml/MEDICATIONS4.xlsx'
+file3 = '../data/MEDICATIONS4.xlsx'
 x3 = pd.ExcelFile(file3)
 meds = x3.parse('Sheet1')
-print(meds.shape) #(2503, 32)
+print(meds.shape)
 
 
-file4 = 'data_ml/VITALS_BP1.xlsx'
+file4 = '../data/VITALS_BP1.xlsx'
 x4 = pd.ExcelFile(file4)
 bp = x4.parse('Sheet1')
-print(bp.shape) #(26858, 10)
+print(bp.shape)
 
 
 ######
@@ -41,12 +41,12 @@ bp1 = bp1.loc[(bp1['y']  == bp1['CHANGE_SYSTOLIC'].abs())]
 bp1 = bp1.drop_duplicates(['PAT_DEID'], keep='last')
 ######
 bp = bp1[['PAT_DEID','CHANGE_SYSTOLIC','CHANGE_DIASTOLIC']]
-print(bp.shape) #(1466, 3)
+print(bp.shape)
 
-file5 = 'data_ml/VITALS_HEART_RATE.xlsx'
+file5 = '../data/VITALS_HEART_RATE.xlsx'
 x5 = pd.ExcelFile(file5)
 heart = x5.parse('Sheet1')
-print(heart.shape) #(44684, 7)
+print(heart.shape)
 
 ######
 heart = heart.dropna(subset=['START_DATE'])
@@ -60,15 +60,15 @@ heart['DAYS_BEFORE_SURGERY'] = heart['DAYS_BEFORE_SURGERY'].astype(int)
 heart['x'] = heart.groupby('PAT_DEID')['DAYS_BEFORE_SURGERY'].transform('min')
 heart1 = heart.loc[(heart['x']  == heart['DAYS_BEFORE_SURGERY'])]
 heart1 = heart1.drop_duplicates(['PAT_DEID'], keep='last')
-print(heart1.shape) #(389, 10)
+print(heart1.shape)
 ######
 heart = heart1[['PAT_DEID','HR_NORMAL_ABNORMAL']]
-print(heart.shape) #(389, 2)
+print(heart.shape)
 
-file6 = 'data_ml/VITALS_TEMP.xlsx'
+file6 = '../data/VITALS_TEMP.xlsx'
 x6 = pd.ExcelFile(file6)
 temp = x6.parse('Sheet1')
-print(temp.shape) #(27426, 6)
+print(temp.shape)
 
 ######
 temp = temp.dropna(subset=['START_DATE'])
@@ -86,12 +86,12 @@ temp = temp.loc[(temp['y']  == temp['CHANGE_TEMP'].abs())]
 temp = temp.drop_duplicates(['PAT_DEID'], keep='last')
 ######
 temp = temp[['PAT_DEID','CHANGE_TEMP']]
-print(temp.shape) #(1471, 2)
+print(temp.shape)
 
-file7 = 'data_ml/VITALS_ANXIETY.xlsx'
+file7 = '../data/VITALS_ANXIETY.xlsx'
 x7 = pd.ExcelFile(file7)
 anxiety = x7.parse('Sheet1')
-print(anxiety.shape) #(40035, 5)
+print(anxiety.shape)
 
 ######
 anxiety = anxiety.dropna(subset=['START_DATE'])
@@ -105,25 +105,24 @@ anxiety['DAYS_BEFORE_SURGERY'] = anxiety['DAYS_BEFORE_SURGERY'].astype(int)
 anxiety['x'] = anxiety.groupby('PAT_DEID')['DAYS_BEFORE_SURGERY'].transform('min')
 anxiety = anxiety.loc[(anxiety['x']  == anxiety['DAYS_BEFORE_SURGERY'])]
 anxiety = anxiety.drop_duplicates(['PAT_DEID'], keep='last')
-print(anxiety.shape) #(875, 8)
+print(anxiety.shape)
 ######
 anxiety = anxiety[['PAT_DEID','ANXIETY']]
-print(anxiety.shape) #(875, 2)
+print(anxiety.shape)
 
 pat_icd9 = pd.merge(patient_demog, icd9, on='PAT_DEID', how='outer')
-print(pat_icd9.shape) #(5127, 29)
+print(pat_icd9.shape)
 pat_icd9_meds = pd.merge(pat_icd9, meds, on='PAT_DEID', how='outer')
-print(pat_icd9_meds.shape) #(5127, 60)
+print(pat_icd9_meds.shape)
 pat_icd9_meds_b = pd.merge(pat_icd9_meds, bp, on='PAT_DEID', how='outer')
-print(pat_icd9_meds_b.shape) #(5127, 62)
+print(pat_icd9_meds_b.shape)
 pat_icd9_meds_bh = pd.merge(pat_icd9_meds_b, heart, on='PAT_DEID', how='outer')
-print(pat_icd9_meds_bh.shape) #(5127, 63)
+print(pat_icd9_meds_bh.shape)
 pat_icd9_meds_bht = pd.merge(pat_icd9_meds_bh, temp, on='PAT_DEID', how='outer')
-print(pat_icd9_meds_bht.shape) #(5127, 64)
+print(pat_icd9_meds_bht.shape)
 pat_icd9_meds_bhta = pd.merge(pat_icd9_meds_bht, anxiety, on='PAT_DEID', how='outer')
-print(pat_icd9_meds_bhta.shape) #(5127, 65)
+print(pat_icd9_meds_bhta.shape)
 
-pat_icd9_meds_bhta.to_pickle("data_ml/FINAL_FEATURE_VECTOR.pkl")
-writer = pd.ExcelWriter('data_ml/FINAL_FEATURE_VECTOR.xlsx')
+writer = pd.ExcelWriter('../data/FEATURE_VECTOR_initial.xlsx')
 pat_icd9_meds_bhta.to_excel(writer,'Sheet1')
 writer.save()

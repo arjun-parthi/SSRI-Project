@@ -1,50 +1,53 @@
 import pandas as pd
 import numpy as np
-file1 = 'data_ml/FINAL_FEATURE_VECTOR2.xlsx'
+file1 = '../data/FV2.xlsx'
 x1 = pd.ExcelFile(file1)
 feature = x1.parse('Sheet1')
-print(feature.shape) #(5127, 64)
+print(feature.shape)
 
-file2 = 'data_ml/AP_SSRI_PD_PAIN.xlsx'
+file2 = '../data/AP_SSRI_PD_PAIN.xlsx'
 x2 = pd.ExcelFile(file2)
 cohort1 = x2.parse('Sheet1')
-print(cohort1.shape) #(1021, 13)
+print(cohort1.shape)
 cohort1 = cohort1.drop(['CLASSIFICATION'], axis=1)
 cohort1 = cohort1.drop_duplicates(['PAT_DEID'], keep='last')
-print(cohort1.shape) #(607, 12)
+print(cohort1.shape)
 
-file3 = 'data_ml/AP_SSRI_NPD_PAIN.xlsx'
+file3 = '../data/AP_SSRI_NPD_PAIN.xlsx'
 x3 = pd.ExcelFile(file3)
 cohort2 = x3.parse('Sheet1')
-print(cohort2.shape) #(1739, 13)
+print(cohort2.shape)
 cohort2 = cohort2.drop(['CLASSIFICATION'], axis=1)
 cohort2 = cohort2.drop_duplicates(['PAT_DEID'], keep='last')
-print(cohort2.shape) #(1286, 12)
+print(cohort2.shape)
 
-file4 = 'data_ml/AP_NOSSRI_PD_PAIN.xlsx'
+file4 = '../data/AP_NOSSRI_PD_PAIN.xlsx'
 x4 = pd.ExcelFile(file4)
 cohort3 = x4.parse('Sheet1')
-print(cohort3.shape) #(1429, 13)
+print(cohort3.shape)
 cohort3 = cohort3.drop(['CLASSIFICATION'], axis=1)
 cohort3 = cohort3.drop_duplicates(['PAT_DEID'], keep='last')
-print(cohort3.shape) #(803, 12)
+print(cohort3.shape)
 
-file5 = 'data_ml/AP_NOSSRI_NPD_PAIN.xlsx'
+file5 = '../data/AP_NOSSRI_NPD_PAIN.xlsx'
 x5 = pd.ExcelFile(file5)
 cohort4 = x5.parse('Sheet1')
-print(cohort4.shape) #(2404, 13)
+print(cohort4.shape)
 cohort4 = cohort4.drop(['CLASSIFICATION'], axis=1)
 cohort4 = cohort4.drop_duplicates(['PAT_DEID'], keep='last')
-print(cohort4.shape) #(1614, 12)
+print(cohort4.shape)
 
 cohorts = pd.concat([cohort1,cohort2,cohort3,cohort4])
-print(cohorts.shape) #(4310, 12)
+print(cohorts.shape)
 feature4 = pd.merge(feature, cohorts, on='PAT_DEID', how='outer')
-print(feature4.shape) #(5127, 75)
+print(feature4.shape)
 feature4 = feature4.dropna(subset=['COHORT'])
-print(feature4.shape) #(4310, 75)
+print(feature4.shape)
 
-feature4.to_pickle("data_ml/FEATURE_VEC.pkl")
-writer = pd.ExcelWriter('data_ml/FEATURE_VEC.xlsx')
+feature4 = feature4.drop(['PAIN_CAT_DISCHARGE'], axis=1)
+feature4 = feature4.drop(['PAIN_CAT_FOLLOWUP_3'], axis=1)
+feature4 = feature4.drop(['PAIN_CAT_FOLLOWUP_8'], axis=1)
+
+writer = pd.ExcelWriter('../data/FV3.xlsx')
 feature4.to_excel(writer,'Sheet1')
 writer.save()

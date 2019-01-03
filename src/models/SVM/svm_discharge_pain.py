@@ -7,9 +7,8 @@ import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from sklearn.preprocessing import MinMaxScaler
 
-file1 = 'data_ml/F10.csv'
+file1 = '../../data/FINAL_FEATURE_VECTOR_improved.csv'
 features_all = pd.read_csv(file1)
-print(features_all.shape) #(4306, 74)
 
 disch = features_all.drop('DELTA_PAIN_3WEEKS', axis=1)
 disch = disch.drop('DELTA_PAIN_8WEEKS', axis=1)
@@ -36,22 +35,20 @@ disch.OPIOID_TOLERANT = [opioid[item] for item in disch.OPIOID_TOLERANT]
 disch.DELTA_PAIN_DISCHARGE = [output[item] for item in disch.DELTA_PAIN_DISCHARGE]
 
 disch1 = disch.dropna(subset=['DELTA_PAIN_DISCHARGE', 'PREOP_PAIN'])
-print(disch.shape)  #(4306, 66)
-print(disch1.shape) #(3326, 66)
+
 fpr_load = []
 tpr_load = []
 thresholds = []
 for i in range(10):
     train, test = train_test_split(disch1, test_size=0.2)
-    print(train.shape) #(2660, 66)
-    print(test.shape) #(666, 66)
+
     scaler = MinMaxScaler()
     scaler.fit(train)
     train = scaler.transform(train)
     test = scaler.transform(test)
     regr = SVC(C=1.0, kernel='rbf', probability=True, tol=0.001, max_iter=3, class_weight = 'balanced')
     X = train[:,1:65]
-    print(X.shape) #(2660, 62)
+
     y = train[:,65]
     print(y.shape)
     regr.fit(X, y)
