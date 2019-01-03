@@ -6,9 +6,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
-file1 = 'data_ml/F10.csv'
+file1 = '../../data/FINAL_FEATURE_VECTOR_improved.csv'
 features_all = pd.read_csv(file1)
-print(features_all.shape) #(4306, 74)
+print(features_all.shape)
 
 disch = features_all.drop('DELTA_PAIN_3WEEKS', axis=1)
 disch = disch.drop('DELTA_PAIN_8WEEKS', axis=1)
@@ -35,18 +35,18 @@ disch.OPIOID_TOLERANT = [opioid[item] for item in disch.OPIOID_TOLERANT]
 disch.DELTA_PAIN_DISCHARGE = [output[item] for item in disch.DELTA_PAIN_DISCHARGE]
 
 disch1 = disch.dropna(subset=['DELTA_PAIN_DISCHARGE', 'PREOP_PAIN'])
-print(disch.shape)  #(4306, 66)
-print(disch1.shape) #(3326, 66)
+print(disch.shape)
+print(disch1.shape)
 fpr_load = []
 tpr_load = []
 thresholds = []
 for i in range(10):
     train, test = train_test_split(disch1, test_size=0.2)
-    print(train.shape) #(2660, 66)
-    print(test.shape) #(666, 66)
+    print(train.shape)
+    print(test.shape)
     regr = ElasticNetCV(cv=5, l1_ratio=0.3, n_alphas =500, max_iter=10000, normalize=True)
     X = train.iloc[:,1:65]
-    print(X.shape) #(2660, 62)
+    print(X.shape)
     y = train.iloc[:,65]
     print(y.shape)
     regr.fit(X, y)
@@ -101,6 +101,6 @@ plt.show()
 
 feature_name_aslist = list(X.columns.values)
 df_elasticnetCoff = pd.DataFrame({'Features':feature_name_aslist, 'Weights':regr.coef_})
-writer = pd.ExcelWriter('data_ml/coeffs12.xlsx')
+writer = pd.ExcelWriter('../../data/elasticnet/coeffs1.xlsx')
 df_elasticnetCoff.to_excel(writer,'Sheet1')
 writer.save()

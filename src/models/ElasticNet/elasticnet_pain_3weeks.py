@@ -6,9 +6,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
-file1 = 'data_ml/F10.csv'
+file1 = '../../data/FINAL_FEATURE_VECTOR_improved.csv'
 features_all = pd.read_csv(file1)
-print(features_all.shape) #(4306, 74)
+print(features_all.shape)
 
 disch = features_all.drop('DELTA_PAIN_DISCHARGE', axis=1)
 disch = disch.drop('DELTA_PAIN_8WEEKS', axis=1)
@@ -102,6 +102,6 @@ plt.show()
 
 feature_name_aslist = list(X.columns.values)
 df_elasticnetCoff = pd.DataFrame({'Features':feature_name_aslist, 'Weights':regr.coef_})
-writer = pd.ExcelWriter('data_ml/coeffs13.xlsx')
+writer = pd.ExcelWriter('../../data/elasticnet/coeffs2.xlsx')
 df_elasticnetCoff.to_excel(writer,'Sheet1')
 writer.save()
